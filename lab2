@@ -1,0 +1,52 @@
+from sklearn.datasets import load_breast_cancer
+from sklearn.model_selection import train_test_split
+from sklearn.svm import SVC
+from sklearn.metrics import confusion_matrix, accuracy_score, precision_score, recall_score, f1_score
+
+data = load_breast_cancer()
+X = data.data
+y = data.target
+
+# แยกข้อมูล (80% train, 20% test)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y)
+
+# Fit model rbf kernel
+svm_model = SVC(kernel='rbf', random_state=42)
+svm_model.fit(X_train, y_train)
+
+#เก็บข้อมูล
+y_pred = svm_model.predict(X_test)
+for i in range(len(y_test)):
+    print(y_test[i])
+
+for j in y_pred:
+    print(j)
+
+#แสดง confusion matrix
+cm = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix:")
+print(cm)
+
+# Accuracy
+accuracy = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {accuracy:.4f}")
+
+# Precision
+precision = precision_score(y_test, y_pred)
+print(f"Precision: {precision:.4f}")
+
+# Recall (Sensitivity)
+recall = recall_score(y_test, y_pred)
+print(f"Recall: {recall:.4f}")
+
+# F1 Score
+f1 = f1_score(y_test, y_pred)
+print(f"F1 Score: {f1:.4f}")
+
+#Sensitivity
+recall = recall_score(y_test, y_pred)
+print(f"Recall (Sensitivity): {recall:.4f}")
+
+# Specificity (คำนวณจาก confusion matrix)
+specificity = cm[0, 0] / (cm[0, 0] + cm[0, 1])
+print(f"Specificity: {specificity:.4f}")
