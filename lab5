@@ -1,0 +1,36 @@
+from matplotlib import pyplot as plt
+from sklearn.datasets import load_wine
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.ensemble import RandomForestClassifier
+
+data = load_wine()
+X = data.data
+y = data.target
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)#แยกข้อมูล Train 80% และ Test 20%
+clf = DecisionTreeClassifier(max_depth= 1000) #หาค่าความสูงจำกัดของต้นไม้ที่เหมาะสม
+clf.fit(X_train,y_train)
+y_pred = clf.predict(X_test)
+print("Decision Tree")
+print("Accuracy",accuracy_score(y_test,y_pred))
+print("F1-score",f1_score(y_test,y_pred, average='macro'))
+print("-------------------------------------------------")
+#---------------------Random Forest -------------------------------------
+clf = RandomForestClassifier(max_depth= 1000) #หาค่าความสูงจำกัดของต้นไม้ที่เหมาะสม
+clf.fit(X_train,y_train)
+y_pred = clf.predict(X_test)
+print("Random Forest ")
+print("Accuracy",accuracy_score(y_test,y_pred))
+print("F1-score",f1_score(y_test,y_pred, average='macro'))
+print("-------------------------------------------------")
+clf = RandomForestClassifier(n_estimators=100, max_depth=3) #เลือกmax_depthที่ดีที่สุด
+clf.fit(X_train, y_train)
+y_pred_rf = clf.predict(X_test)
+print("Random Forest ")
+print("Accuracy",accuracy_score(y_test,y_pred))
+print("F1-score",f1_score(y_test,y_pred, average='macro'))
+
+
+
