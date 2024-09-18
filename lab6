@@ -1,0 +1,67 @@
+import numpy as np
+from scipy.spatial.distance import euclidean
+from sklearn import datasets
+import pandas as pd
+from sklearn.cluster import KMeans
+
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+model = KMeans(n_clusters=3).fit(X)
+for i in range(len(y)):
+    print(model.labels_[i], "\t",y[i])
+def kmean(a1_list, a2_list, centroid_1, centroid_2):
+    if len(a1_list) == len(a2_list) and len(centroid_1) == len(centroid_2):
+        distance = np.zeros((len(a1_list), len(centroid_1)))
+        new_c1 = np.zeros(len(centroid_1))
+        new_c2 = np.zeros(len(centroid_2))
+        cluster_no = []
+        c_cnt = np.zeros(len(centroid_1))
+
+        # คำนวณ Euclidean Distance
+        for i in range(len(a1_list)):
+            for j in range(len(centroid_1)):
+                distance[i, j] = euclidean([a1_list[i], a2_list[i]], [centroid_1[j], centroid_2[j]])
+
+        # ระบุกลุ่มของข้อมูล
+        print("\nPoint\td1\td2\td3\tCluster")
+        for i in range(len(a1_list)):
+            min_val = min(distance[i, :])
+            cluster_no.append(list(distance[i, :]).index(min_val))
+            print(str(i + 1), "\t",
+                  '{:.2f}'.format(distance[i, 0]), "\t",
+                  '{:.2f}'.format(distance[i, 1]), "\t",
+                  '{:.2f}'.format(distance[i, 2]), "\t",
+                  cluster_no[i] + 1)
+
+        # อัปเดต centroid ใหม่
+        for i in range(len(a1_list)):
+            new_c1[cluster_no[i]] += a1_list[i]
+            new_c2[cluster_no[i]] += a2_list[i]
+            c_cnt[cluster_no[i]] += 1
+
+        for i in range(len(new_c1)):
+            new_c1[i] /= c_cnt[i]
+            new_c2[i] /= c_cnt[i]
+
+        return new_c1, new_c2
+    else:
+        print("Dimension Error")
+
+
+# ข้อมูลจุดและ centroid เริ่มต้น
+a1 = [0, 2, 3, 5, 7, 11, 13, 15, 16, 19]
+a2 = [0, 5, 1, 4, 7, 1, 5, 2, 6, 4]
+c1 = [0, 7, 19]
+c2 = [0, 7, 4]
+
+# เรียกใช้รอบที่ 1
+print("Iteration 1:")
+new_c1, new_c2 = kmean(a1, a2, c1, c2)
+
+# เรียกใช้รอบที่ 2 ด้วย centroid ใหม่
+print("\nIteration 2:")
+final_c1, final_c2 = kmean(a1, a2, new_c1, new_c2)
+
+
