@@ -1,0 +1,66 @@
+from sklearn.datasets import load_breast_cancer
+from sklearn.feature_selection import SelectKBest, f_classif, RFE
+from sklearn.metrics import accuracy_score, precision_score, recall_score
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+
+data = load_breast_cancer()
+X = data.data
+Y = data.target
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
+model = DecisionTreeClassifier().fit(X_train, Y_train)
+Y_pred = model.predict(X_test)
+
+accuracy = accuracy_score(Y_test, Y_pred)
+precision = precision_score(Y_test, Y_pred)
+recall = recall_score(Y_test, Y_pred)
+print(f"Accuracy: {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall: {recall:.4f}")
+print('--------------------------------------------------------')
+
+#ANOVA
+anova_selector = SelectKBest(score_func=f_classif, k=25)
+X_train = anova_selector.fit_transform(X_train, Y_train)
+X_test = anova_selector.transform(X_test)
+
+select_feature = anova_selector.get_support(indices=True)
+feature_name = [data.feature_names[i] for i in select_feature]
+print(feature_name)
+
+model = DecisionTreeClassifier()
+model.fit(X_train, Y_train)
+Y_pred = model.predict(X_test)
+
+# คำนวณผลลัพธ์
+accuracy = accuracy_score(Y_test, Y_pred)
+precision = precision_score(Y_test, Y_pred)
+recall = recall_score(Y_test, Y_pred)
+print(f"ANOVA - Accuracy: {accuracy:.4f}")
+print(f"ANOVA - Precision: {precision:.4f}")
+print(f"ANOVA - Recall: {recall:.4f}")
+print('--------------------------------------------------------')
+
+#RFE
+k = 10
+rfe = RFE(estimator=DecisionTreeClassifier(), n_features_to_select=k)
+X_train_rfe = rfe.fit_transform(X_train, Y_train)
+X_test_rfe = rfe.transform(X_test)
+
+select_feature = rfe.get_support(indices=True)
+feature_name = [data.feature_names[i] for i in select_feature]
+print(feature_name)
+
+dt_model = DecisionTreeClassifier()
+dt_model.fit(X_train_rfe, Y_train)
+Y_pred = dt_model.predict(X_test_rfe)
+
+# คำนวณผลลัพธ์
+accuracy = accuracy_score(Y_test, Y_pred)
+precision = precision_score(Y_test, Y_pred)
+recall = recall_score(Y_test, Y_pred)
+print(f"RFE - Accuracy: {accuracy:.4f}")
+print(f"RFE - Precision: {precision:.4f}")
+print(f"RFE - Recall: {recall:.4f}")
+print('--------------------------------------------------------')
+
