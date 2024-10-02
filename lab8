@@ -1,0 +1,19 @@
+import matplotlib.pyplot as plt
+import scipy
+from scipy.cluster.hierarchy import dendrogram,linkage
+from sklearn import datasets
+from sklearn.cluster import AgglomerativeClustering
+
+iris = datasets.load_iris()
+X = iris.data
+y = iris.target
+
+model = AgglomerativeClustering(n_clusters=3)
+model.fit(X)
+
+for i in range(len(y)):
+    print(model.labels_[i], "\t", y[i])
+
+dendrogram(linkage(X, 'ward'))
+plt.title('Dendrogram for Iris Dataset')
+plt.show()
